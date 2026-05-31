@@ -14,6 +14,8 @@
 }
 
 body {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
   -webkit-user-select: none;
   user-select: none;
 }
@@ -30,6 +32,7 @@ button,
 select,
 input {
   font: inherit;
+  touch-action: manipulation;
 }
 
 button {
@@ -124,6 +127,7 @@ input:focus-visible {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  touch-action: none;
 }
 
 .pixi-canvas {
@@ -144,10 +148,12 @@ input:focus-visible {
   gap: 12px;
   padding: 12px;
   overflow: auto;
+  overscroll-behavior: contain;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   background: rgba(28, 29, 33, 0.96);
   transform: translate(var(--dock-offset-x, 0px), calc(-50% + var(--dock-offset-y, 0px)));
+  -webkit-overflow-scrolling: touch;
 }
 
 .control-section {
@@ -329,13 +335,13 @@ input:focus-visible {
     display: grid;
     gap: 8px;
     min-height: calc(100dvh - 64px);
-    padding: 8px 12px 12px;
+    padding: 8px 10px max(10px, env(safe-area-inset-bottom));
   }
 
   .stage-shell {
     position: relative;
     inset: auto;
-    min-height: min(58dvh, 520px);
+    min-height: min(54dvh, 520px);
     border-radius: 12px;
   }
 
@@ -344,12 +350,39 @@ input:focus-visible {
     right: auto;
     top: auto;
     width: 100%;
-    max-height: none;
+    max-height: min(42dvh, 420px);
     grid-template-columns: 1fr 1fr;
     align-self: end;
-    padding: 10px;
+    padding: 10px 10px max(12px, env(safe-area-inset-bottom));
+    overflow: auto;
     border-radius: 10px;
     transform: none;
+  }
+
+  .drag-handle {
+    min-height: 34px;
+    min-width: 46px;
+  }
+
+  .field select,
+  .field input[type='search'],
+  .primary-button,
+  .ghost-button {
+    min-height: 40px;
+  }
+
+  .field select,
+  .field input[type='search'] {
+    font-size: 16px;
+  }
+
+  .range-field input {
+    height: 28px;
+  }
+
+  .checkbox-field input[type='checkbox'] {
+    width: 20px;
+    height: 20px;
   }
 
   .control-section + .control-section {
@@ -370,12 +403,13 @@ input:focus-visible {
   }
 
   .stage-shell {
-    min-height: 50dvh;
+    min-height: 48dvh;
   }
 
   .control-dock {
     grid-template-columns: 1fr;
     gap: 14px;
+    max-height: 44dvh;
   }
 
   .control-section + .control-section {
@@ -383,5 +417,20 @@ input:focus-visible {
     padding-left: 0;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     border-left: 0;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .field select:hover:not(:disabled),
+  .field input[type='search']:hover:not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+
+  .primary-button:hover:not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+
+  .ghost-button:hover:not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.14);
   }
 }

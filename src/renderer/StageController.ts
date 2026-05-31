@@ -150,11 +150,22 @@ export class StageController {
     return this.readActiveInstance()?.canDragCharacterAt(x, y) ?? false;
   }
 
-  pickActiveIndexAt(x: number, y: number): number {
+  pickActiveIndexAt(x: number, y: number, radius = 0): number {
+    const points =
+      radius > 0
+        ? [
+            { x, y },
+            { x: x - radius, y },
+            { x: x + radius, y },
+            { x, y: y - radius },
+            { x, y: y + radius },
+          ]
+        : [{ x, y }];
+
     for (let index = this.instances.length - 1; index >= 0; index -= 1) {
       const instance = this.instances[index];
 
-      if (instance && instance.canDragCharacterAt(x, y)) {
+      if (instance && points.some((point) => instance.canDragCharacterAt(point.x, point.y))) {
         this.activeIndex = index;
         return index;
       }
