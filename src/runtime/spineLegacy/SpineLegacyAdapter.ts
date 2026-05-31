@@ -98,6 +98,7 @@ const patchAttachmentLoader = (loader: AtlasAttachmentLoader): void => {
 class SpineLegacyModelInstance implements RuntimeModelInstance {
   private shadowEnabled = true;
   private characterOffset = { x: 0, y: 0 };
+  private characterScale = 1;
   private characterRotation = 0;
   private characterMirror = false;
   private readonly shadowSlots: { slot: { color: { a: number } }; alpha: number }[];
@@ -161,6 +162,12 @@ class SpineLegacyModelInstance implements RuntimeModelInstance {
     this.renderFrame(0);
   }
 
+  setCharacterScale(scale: number): void {
+    this.characterScale = Math.max(0.2, Math.min(3, scale));
+    this.layout({ width: this.app.renderer.width, height: this.app.renderer.height });
+    this.renderFrame(0);
+  }
+
   setCharacterRotation(degrees: number): void {
     this.characterRotation = degrees;
     this.layout({ width: this.app.renderer.width, height: this.app.renderer.height });
@@ -215,16 +222,17 @@ class SpineLegacyModelInstance implements RuntimeModelInstance {
   }
 
   private layout(size: StageSize): void {
-    const scaleX = this.characterMirror ? -this.model.layout.scale : this.model.layout.scale;
+    const baseScale = this.model.layout.scale * this.characterScale;
+    const scaleX = this.characterMirror ? -baseScale : baseScale;
 
-    this.spine.scale.set(scaleX, this.model.layout.scale);
+    this.spine.scale.set(scaleX, baseScale);
     const x = size.width * this.model.layout.anchorX + this.model.layout.offsetX + this.characterOffset.x;
     const y = size.height * this.model.layout.anchorY + this.model.layout.offsetY + this.characterOffset.y;
 
     this.spine.position.set(x, y);
     this.spine.rotation = (this.characterRotation * Math.PI) / 180;
-    const radiusX = Math.max(18, 64 * this.model.layout.scale);
-    const radiusY = Math.max(6, 16 * this.model.layout.scale);
+    const radiusX = Math.max(18, 64 * baseScale);
+    const radiusY = Math.max(6, 16 * baseScale);
 
     this.shadow.clear();
     this.shadow.beginFill(0x000000, 0.22);

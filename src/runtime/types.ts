@@ -29,6 +29,7 @@ export interface RuntimeModelInstance {
   setTimeScale(value: number): void;
   setCharacterShadow(enabled: boolean): void;
   setCharacterOffset(x: number, y: number): void;
+  setCharacterScale(scale: number): void;
   setCharacterRotation(degrees: number): void;
   setCharacterMirror(enabled: boolean): void;
   canDragCharacterAt(x: number, y: number): boolean;

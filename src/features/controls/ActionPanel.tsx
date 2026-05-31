@@ -6,15 +6,18 @@ interface ActionPanelProps {
   readonly model: ModelDefinition;
   readonly disabled: boolean;
   readonly timeScale: number;
+  readonly sizeScale: number;
   readonly rotation: number;
   readonly mirrorEnabled: boolean;
   readonly shadowEnabled: boolean;
   readonly onPlay: (action: ActionDefinition, loop: boolean) => void;
   readonly onStop: () => void;
   readonly onTimeScaleChange: (value: number) => void;
+  readonly onSizeScaleChange: (value: number) => void;
   readonly onRotationChange: (degrees: number) => void;
   readonly onMirrorToggle: (enabled: boolean) => void;
   readonly onShadowToggle: (enabled: boolean) => void;
+  readonly onResetTransform: () => void;
 }
 
 export const ActionPanel = (props: ActionPanelProps) => {
@@ -86,6 +89,11 @@ export const ActionPanel = (props: ActionPanelProps) => {
     props.onRotationChange(Number.parseFloat(target.value));
   };
 
+  const handleSizeScaleChange = (event: Event): void => {
+    const target = event.currentTarget as HTMLInputElement;
+    props.onSizeScaleChange(Number.parseFloat(target.value));
+  };
+
   const handleQueryInput = (event: Event): void => {
     const target = event.currentTarget as HTMLInputElement;
     setQuery(target.value);
@@ -148,6 +156,20 @@ export const ActionPanel = (props: ActionPanelProps) => {
         <strong>{props.timeScale.toFixed(1)}x</strong>
       </label>
 
+      <label class="field range-field">
+        <span>Size</span>
+        <input
+          type="range"
+          min="0.2"
+          max="3"
+          step="0.1"
+          value={props.sizeScale}
+          onInput={handleSizeScaleChange}
+          disabled={props.disabled}
+        />
+        <strong>{props.sizeScale.toFixed(1)}x</strong>
+      </label>
+
       <label class="field checkbox-field">
         <span>Loop</span>
         <input type="checkbox" checked={loopEnabled()} onChange={handleLoopToggle} disabled={props.disabled} />
@@ -171,6 +193,10 @@ export const ActionPanel = (props: ActionPanelProps) => {
         <span>Mirror</span>
         <input type="checkbox" checked={props.mirrorEnabled} onChange={handleMirrorToggle} disabled={props.disabled} />
       </label>
+
+      <button class="ghost-button" type="button" onClick={props.onResetTransform} disabled={props.disabled}>
+        Reset Transform
+      </button>
 
       <label class="field checkbox-field">
         <span>Shadow</span>

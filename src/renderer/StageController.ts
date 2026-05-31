@@ -6,6 +6,7 @@ import type { RuntimeCommand, RuntimeModelInstance, StageSize } from '@/runtime/
 export class StageController {
   private readonly instances: RuntimeModelInstance[] = [];
   private readonly characterOffsets: Array<{ x: number; y: number }> = [];
+  private readonly characterScales: number[] = [];
   private readonly characterRotations: number[] = [];
   private readonly characterMirrors: boolean[] = [];
   private activeIndex = -1;
@@ -46,14 +47,17 @@ export class StageController {
 
     this.instances.push(instance);
     this.characterOffsets.push({ x: 0, y: 0 });
+    this.characterScales.push(1);
     this.characterRotations.push(0);
     this.characterMirrors.push(false);
     this.activeIndex = this.instances.length - 1;
     const offset = this.characterOffsets[this.activeIndex];
+    const scale = this.characterScales[this.activeIndex];
     const rotation = this.characterRotations[this.activeIndex];
     const mirror = this.characterMirrors[this.activeIndex];
 
     instance.setCharacterOffset(offset.x, offset.y);
+    instance.setCharacterScale(scale);
     instance.setCharacterRotation(rotation);
     instance.setCharacterMirror(mirror);
 
@@ -81,6 +85,15 @@ export class StageController {
 
     this.characterOffsets[this.activeIndex] = { x, y };
     this.readActiveInstance()?.setCharacterOffset(x, y);
+  }
+
+  setCharacterScale(scale: number): void {
+    if (this.activeIndex < 0 || this.activeIndex >= this.characterScales.length) {
+      return;
+    }
+
+    this.characterScales[this.activeIndex] = scale;
+    this.readActiveInstance()?.setCharacterScale(scale);
   }
 
   setCharacterRotation(degrees: number): void {
@@ -115,6 +128,14 @@ export class StageController {
     }
 
     return this.characterRotations[this.activeIndex];
+  }
+
+  readCharacterScale(): number {
+    if (this.activeIndex < 0 || this.activeIndex >= this.characterScales.length) {
+      return 1;
+    }
+
+    return this.characterScales[this.activeIndex];
   }
 
   readCharacterMirror(): boolean {
@@ -166,6 +187,7 @@ export class StageController {
     active.destroy();
     this.instances.splice(this.activeIndex, 1);
     this.characterOffsets.splice(this.activeIndex, 1);
+    this.characterScales.splice(this.activeIndex, 1);
     this.characterRotations.splice(this.activeIndex, 1);
     this.characterMirrors.splice(this.activeIndex, 1);
 
@@ -221,6 +243,7 @@ export class StageController {
 
     this.activeIndex = -1;
     this.characterOffsets.length = 0;
+    this.characterScales.length = 0;
     this.characterRotations.length = 0;
     this.characterMirrors.length = 0;
   }

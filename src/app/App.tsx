@@ -37,6 +37,7 @@ export const App = () => {
   const [status, setStatus] = createSignal<StageStatus>('idle');
   const [message, setMessage] = createSignal('Stage is booting.');
   const [timeScale, setTimeScale] = createSignal(1);
+  const [sizeScale, setSizeScale] = createSignal(1);
   const [rotation, setRotation] = createSignal(0);
   const [mirrorEnabled, setMirrorEnabled] = createSignal(false);
   const [shadowEnabled, setShadowEnabled] = createSignal(true);
@@ -107,6 +108,7 @@ export const App = () => {
       await stage.loadModel(model);
       stage.setCharacterShadow(shadowEnabled());
       stage.setGlobalTimeScale(timeScale());
+      stage.setCharacterScale(1);
       stage.setCharacterRotation(0);
       stage.setCharacterMirror(false);
       const actorId = `actor-${nextActorNumber++}`;
@@ -165,6 +167,7 @@ export const App = () => {
 
     stage.setActiveIndex(nextIndex);
     setActiveActorId(nextActors[nextIndex].id);
+    setSizeScale(stage.readCharacterScale());
     setRotation(stage.readCharacterRotation());
     setMirrorEnabled(stage.readCharacterMirror());
     setMessage(`Active: ${nextActors[nextIndex].model.name}`);
@@ -180,6 +183,7 @@ export const App = () => {
 
     stage.setActiveIndex(index);
     setActiveActorId(actorId);
+    setSizeScale(stage.readCharacterScale());
     setRotation(stage.readCharacterRotation());
     setMirrorEnabled(stage.readCharacterMirror());
     setMessage(`Active: ${actors()[index].model.name}`);
@@ -195,6 +199,7 @@ export const App = () => {
 
     stage.setActiveIndex(index);
     setActiveActorId(nextActors[index].id);
+    setSizeScale(stage.readCharacterScale());
     setRotation(stage.readCharacterRotation());
     setMirrorEnabled(stage.readCharacterMirror());
     setMessage(`Active: ${nextActors[index].model.name}`);
@@ -208,9 +213,34 @@ export const App = () => {
     stage?.setCharacterRotation(next);
   };
 
+  const handleSizeScaleChange = (value: number): void => {
+    const stage = controller();
+    const next = Math.max(0.2, Math.min(3, value));
+
+    setSizeScale(next);
+    stage?.setCharacterScale(next);
+  };
+
   const handleMirrorToggle = (enabled: boolean): void => {
     setMirrorEnabled(enabled);
     controller()?.setCharacterMirror(enabled);
+  };
+
+  const handleResetTransform = (): void => {
+    const stage = controller();
+
+    if (!stage) {
+      return;
+    }
+
+    stage.setCharacterOffset(0, 0);
+    stage.setCharacterScale(1);
+    stage.setCharacterRotation(0);
+    stage.setCharacterMirror(false);
+
+    setSizeScale(1);
+    setRotation(0);
+    setMirrorEnabled(false);
   };
 
   const handlePlay = (action: ActionDefinition, loop: boolean): void => {
@@ -273,15 +303,18 @@ export const App = () => {
             model={activeActor()?.model ?? selectedModel()}
             disabled={!canControlMotion()}
             timeScale={timeScale()}
+            sizeScale={sizeScale()}
             rotation={rotation()}
             mirrorEnabled={mirrorEnabled()}
             shadowEnabled={shadowEnabled()}
             onPlay={handlePlay}
             onStop={handleStop}
             onTimeScaleChange={handleTimeScaleChange}
+            onSizeScaleChange={handleSizeScaleChange}
             onRotationChange={handleRotationChange}
             onMirrorToggle={handleMirrorToggle}
             onShadowToggle={handleShadowToggle}
+            onResetTransform={handleResetTransform}
           />
         </aside>
       </main>
