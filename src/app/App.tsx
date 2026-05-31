@@ -164,13 +164,21 @@ export const App = () => {
     }
 
     const nextIndex = Math.min(removeIndex, nextActors.length - 1);
+    const nextActor = nextActors[nextIndex];
+
+    if (!nextActor) {
+      setActiveActorId(undefined);
+      setStatus('idle');
+      setMessage('No characters on stage. Add one.');
+      return;
+    }
 
     stage.setActiveIndex(nextIndex);
-    setActiveActorId(nextActors[nextIndex].id);
+    setActiveActorId(nextActor.id);
     setSizeScale(stage.readCharacterScale());
     setRotation(stage.readCharacterRotation());
     setMirrorEnabled(stage.readCharacterMirror());
-    setMessage(`Active: ${nextActors[nextIndex].model.name}`);
+    setMessage(`Active: ${nextActor.model.name}`);
   };
 
   const handleActiveActorChange = (actorId: string): void => {
@@ -181,12 +189,18 @@ export const App = () => {
       return;
     }
 
+    const actor = actors()[index];
+
+    if (!actor) {
+      return;
+    }
+
     stage.setActiveIndex(index);
     setActiveActorId(actorId);
     setSizeScale(stage.readCharacterScale());
     setRotation(stage.readCharacterRotation());
     setMirrorEnabled(stage.readCharacterMirror());
-    setMessage(`Active: ${actors()[index].model.name}`);
+    setMessage(`Active: ${actor.model.name}`);
   };
 
   const handleActiveIndexChange = (index: number): void => {
@@ -197,12 +211,18 @@ export const App = () => {
       return;
     }
 
+    const actor = nextActors[index];
+
+    if (!actor) {
+      return;
+    }
+
     stage.setActiveIndex(index);
-    setActiveActorId(nextActors[index].id);
+    setActiveActorId(actor.id);
     setSizeScale(stage.readCharacterScale());
     setRotation(stage.readCharacterRotation());
     setMirrorEnabled(stage.readCharacterMirror());
-    setMessage(`Active: ${nextActors[index].model.name}`);
+    setMessage(`Active: ${actor.model.name}`);
   };
 
   const handleRotationChange = (degrees: number): void => {

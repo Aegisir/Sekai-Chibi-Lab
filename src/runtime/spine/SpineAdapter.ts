@@ -51,7 +51,11 @@ class SpineModelInstance implements RuntimeModelInstance {
   ) {
     this.shadowSlots = this.spine.skeleton.slots
       .filter((slot) => /shadow|kage/iu.test(slot.data.name))
-      .map((slot) => ({ slot, alpha: slot.color.a }));
+      .map((slot) => {
+        const colorSlot = slot as unknown as { color: { a: number } };
+
+        return { slot: colorSlot, alpha: colorSlot.color.a };
+      });
   }
 
   execute(command: RuntimeCommand): void {

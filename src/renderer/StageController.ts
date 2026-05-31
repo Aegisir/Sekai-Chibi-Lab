@@ -51,10 +51,10 @@ export class StageController {
     this.characterRotations.push(0);
     this.characterMirrors.push(false);
     this.activeIndex = this.instances.length - 1;
-    const offset = this.characterOffsets[this.activeIndex];
-    const scale = this.characterScales[this.activeIndex];
-    const rotation = this.characterRotations[this.activeIndex];
-    const mirror = this.characterMirrors[this.activeIndex];
+    const offset = this.characterOffsets[this.activeIndex] ?? { x: 0, y: 0 };
+    const scale = this.characterScales[this.activeIndex] ?? 1;
+    const rotation = this.characterRotations[this.activeIndex] ?? 0;
+    const mirror = this.characterMirrors[this.activeIndex] ?? false;
 
     instance.setCharacterOffset(offset.x, offset.y);
     instance.setCharacterScale(scale);
@@ -119,7 +119,7 @@ export class StageController {
       return { x: 0, y: 0 };
     }
 
-    return this.characterOffsets[this.activeIndex];
+    return this.characterOffsets[this.activeIndex] ?? { x: 0, y: 0 };
   }
 
   readCharacterRotation(): number {
@@ -135,7 +135,7 @@ export class StageController {
       return 1;
     }
 
-    return this.characterScales[this.activeIndex];
+    return this.characterScales[this.activeIndex] ?? 1;
   }
 
   readCharacterMirror(): boolean {
@@ -143,7 +143,7 @@ export class StageController {
       return false;
     }
 
-    return this.characterMirrors[this.activeIndex];
+    return this.characterMirrors[this.activeIndex] ?? false;
   }
 
   canDragActiveCharacterAt(x: number, y: number): boolean {
@@ -152,7 +152,9 @@ export class StageController {
 
   pickActiveIndexAt(x: number, y: number): number {
     for (let index = this.instances.length - 1; index >= 0; index -= 1) {
-      if (this.instances[index].canDragCharacterAt(x, y)) {
+      const instance = this.instances[index];
+
+      if (instance && instance.canDragCharacterAt(x, y)) {
         this.activeIndex = index;
         return index;
       }

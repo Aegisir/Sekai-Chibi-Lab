@@ -8,7 +8,7 @@ interface ModelPanelProps {
   readonly selectedModelId: ModelId;
   readonly disabled: boolean;
   readonly actors: readonly { id: string; label: string }[];
-  readonly activeActorId?: string;
+  readonly activeActorId: string | undefined;
   readonly onSelect: (model: ModelDefinition) => void;
   readonly onAdd: (model: ModelDefinition) => void;
   readonly onDeleteActive: () => void;

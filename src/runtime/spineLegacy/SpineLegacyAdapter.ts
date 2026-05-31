@@ -111,7 +111,6 @@ class SpineLegacyModelInstance implements RuntimeModelInstance {
     private readonly shadow: Graphics,
     private readonly spine: Spine,
     private readonly model: SpineLegacyModelDefinition,
-    private readonly baseTexture: BaseTexture,
     readonly actions: readonly ActionDefinition[],
   ) {
     this.shadowSlots = this.spine.skeleton.slots
@@ -293,7 +292,7 @@ export class SpineLegacyAdapter implements RuntimeAdapter {
     app.stage.addChild(spine);
     context.host.append(app.view);
 
-    const instance = new SpineLegacyModelInstance(app, shadow, spine, legacyModel, baseTexture, legacyModel.actions);
+    const instance = new SpineLegacyModelInstance(app, shadow, spine, legacyModel, legacyModel.actions);
 
     instance.resize(context.size);
     app.start();
