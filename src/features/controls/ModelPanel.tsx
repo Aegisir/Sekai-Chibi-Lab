@@ -1,4 +1,4 @@
-import { For } from 'solid-js';
+import { createMemo, createSignal, For } from 'solid-js';
 
 import type { ModelId } from '@/domain/ids';
 import type { CharacterDefinition, ModelDefinition } from '@/domain/manifest';
@@ -32,6 +32,37 @@ const findModel = (
 };
 
 export const ModelPanel = (props: ModelPanelProps) => {
+  const [query, setQuery] = createSignal('');
+
+  const filteredCharacters = createMemo(() => {
+    const keyword = query().trim().toLowerCase();
+
+    if (!keyword) {
+      return props.characters;
+    }
+
+    return props.characters
+      .map((character) => {
+        const matchesCharacter =
+          character.name.toLowerCase().includes(keyword) ||
+          (character.unit?.toLowerCase().includes(keyword) ?? false);
+
+        const models = character.models.filter((model) => {
+          if (matchesCharacter) {
+            return true;
+          }
+
+          return model.name.toLowerCase().includes(keyword) || model.id.toLowerCase().includes(keyword);
+        });
+
+        return {
+          ...character,
+          models,
+        };
+      })
+      .filter((character) => character.models.length > 0);
+  });
+
   const handleSelect = (event: Event): void => {
     const target = event.currentTarget as HTMLSelectElement;
     const model = findModel(props.characters, target.value);
@@ -54,6 +85,11 @@ export const ModelPanel = (props: ModelPanelProps) => {
     props.onActiveActorChange(target.value);
   };
 
+  const handleQueryInput = (event: Event): void => {
+    const target = event.currentTarget as HTMLInputElement;
+    setQuery(target.value);
+  };
+
   return (
     <section class="control-section" aria-labelledby="model-panel-title">
       <div class="section-heading">
@@ -69,9 +105,20 @@ export const ModelPanel = (props: ModelPanelProps) => {
       </div>
 
       <label class="field">
+        <span>Search Model</span>
+        <input
+          type="search"
+          value={query()}
+          onInput={handleQueryInput}
+          placeholder="Name or id"
+          disabled={props.disabled}
+        />
+      </label>
+
+      <label class="field">
         <span>Model</span>
         <select value={props.selectedModelId} onChange={handleSelect} disabled={props.disabled}>
-          <For each={props.characters}>
+          <For each={filteredCharacters()}>
             {(character) => (
               <optgroup label={character.unit ? `${character.name} - ${character.unit}` : character.name}>
                 <For each={character.models}>

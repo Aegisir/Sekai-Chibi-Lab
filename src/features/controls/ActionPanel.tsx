@@ -18,6 +18,7 @@ interface ActionPanelProps {
 }
 
 export const ActionPanel = (props: ActionPanelProps) => {
+  const [query, setQuery] = createSignal('');
   const fallbackAction = (): ActionDefinition | undefined =>
     props.model.actions.find((action) => action.id === props.model.defaultActionId) ??
     props.model.actions.find((action) => action.loop) ??
@@ -28,13 +29,28 @@ export const ActionPanel = (props: ActionPanelProps) => {
     () => props.model.actions.find((action) => action.id === selectedActionId()) ?? fallbackAction(),
   );
   const filteredActions = createMemo(() => {
-    const selected = selectedAction();
+    const keyword = query().trim().toLowerCase();
+    const allActions = props.model.actions;
 
-    if (selected && props.model.actions.some((action) => action.id === selected.id)) {
-      return props.model.actions;
+    if (!keyword) {
+      return allActions;
     }
 
-    return props.model.actions;
+    const filtered = allActions.filter((action) =>
+      [action.label, action.animation, action.id].some((value) => value.toLowerCase().includes(keyword)),
+    );
+
+    if (filtered.length > 0) {
+      return filtered;
+    }
+
+    const selected = selectedAction();
+
+    if (selected && allActions.some((action) => action.id === selected.id)) {
+      return [selected];
+    }
+
+    return allActions;
   });
 
   const handleActionSelect = (event: Event): void => {
@@ -70,6 +86,11 @@ export const ActionPanel = (props: ActionPanelProps) => {
     props.onRotationChange(Number.parseFloat(target.value));
   };
 
+  const handleQueryInput = (event: Event): void => {
+    const target = event.currentTarget as HTMLInputElement;
+    setQuery(target.value);
+  };
+
   const handlePlay = (): void => {
     const action = selectedAction();
 
@@ -83,6 +104,17 @@ export const ActionPanel = (props: ActionPanelProps) => {
       <div class="section-heading">
         <h2 id="action-panel-title">Animation</h2>
       </div>
+
+      <label class="field">
+        <span>Search Motion</span>
+        <input
+          type="search"
+          value={query()}
+          onInput={handleQueryInput}
+          placeholder="Label, animation, id"
+          disabled={props.disabled}
+        />
+      </label>
 
       <label class="field">
         <span>Motion</span>

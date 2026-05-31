@@ -203,19 +203,28 @@ input:focus-visible {
 }
 
 .field select,
+.field input[type='search'],
 .field input[type='range'] {
   width: 100%;
 }
 
-.field select {
+.field select,
+.field input[type='search'] {
   min-height: 30px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 6px;
   color: #f5f7fb;
-  color-scheme: light;
   background: transparent;
   padding: 0 8px;
   transition: border-color 100ms ease;
+}
+
+.field select {
+  color-scheme: light;
+}
+
+.field input[type='search']::placeholder {
+  color: rgba(245, 247, 251, 0.32);
 }
 
 .field select optgroup {
@@ -231,6 +240,10 @@ input:focus-visible {
 }
 
 .field select:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.field input[type='search']:hover:not(:disabled) {
   border-color: rgba(255, 255, 255, 0.22);
 }
 
