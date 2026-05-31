@@ -127,7 +127,7 @@ export class StageController {
       return 0;
     }
 
-    return this.characterRotations[this.activeIndex];
+    return this.characterRotations[this.activeIndex] ?? 0;
   }
 
   readCharacterScale(): number {
