@@ -547,8 +547,16 @@ export const App = () => {
           }}
         >
           <div class="control-banner-shell" aria-hidden="true">
-            <img class="control-banner control-banner-bg" src="/control-banner.png" alt="Sekai Chibi Lab banner" />
-            <img class="control-banner control-banner-right" src="/control-banner-right.png" alt="" />
+            <img
+              class="control-banner control-banner-bg"
+              src={`${import.meta.env.BASE_URL}control-banner.png`}
+              alt="Sekai Chibi Lab banner"
+            />
+            <img
+              class="control-banner control-banner-right"
+              src={`${import.meta.env.BASE_URL}control-banner-right.png`}
+              alt=""
+            />
           </div>
 
           <div class="control-dock-scroll">
