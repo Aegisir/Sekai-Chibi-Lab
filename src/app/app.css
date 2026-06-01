@@ -175,6 +175,9 @@ input:focus-visible {
   position: relative;
   width: 100%;
   margin-bottom: 2px;
+  --banner-art-width: 53%;
+  --banner-art-right: -8.6%;
+  --banner-art-bottom: -7.5%;
 }
 
 .control-banner-bg {
@@ -185,10 +188,9 @@ input:focus-visible {
 
 .control-banner-right {
   position: absolute;
-  right: -23px;
-  bottom: -20px;
-  width: 53%;
-  max-width: 170px;
+  right: var(--banner-art-right);
+  top: -45px;
+  width: var(--banner-art-width);
   pointer-events: none;
 }
 
@@ -387,7 +389,7 @@ input:focus-visible {
     top: auto;
     width: 100%;
     max-height: min(42dvh, 420px);
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     align-self: end;
     padding: 0 10px max(12px, env(safe-area-inset-bottom));
     overflow: visible;
@@ -400,10 +402,9 @@ input:focus-visible {
   }
 
   .control-banner-right {
-    right: -4px;
-    bottom: -8px;
-    width: 56%;
-    max-width: 190px;
+    right: var(--banner-art-right);
+    top: -45px;
+    width: var(--banner-art-width);
   }
 
   .drag-handle {
@@ -433,10 +434,10 @@ input:focus-visible {
   }
 
   .control-section + .control-section {
-    padding-top: 0;
-    padding-left: 14px;
-    border-top: 0;
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 10px;
+    padding-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 0;
   }
 }
 
